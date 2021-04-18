@@ -17,17 +17,20 @@ public class createOutlines : MonoBehaviour
     // This file must be in the StreamingAssets folder
     public string filename = "";
 
-
+    // these are mostly public in order to see whats going on
+    // in the inpsector
+    // should not need to change in the inspector
     public outlineData[] theOutlineData;
     public Vector3[] linePoints;
     public float lastGroup = 0;
     public string lastRegion = "";
 
     public Material lineMaterial;
-
     LineRenderer theLineRenderer;
 
     public string[] countryName;
+
+    public GameObject outlineParent;
 
     // flag to check if you just want everything to be drawn
     // with the current line drawing method this is quite laggy
@@ -67,6 +70,7 @@ public class createOutlines : MonoBehaviour
                 if (lastGroup != thisGroup && lastGroup != 0 && drawThisOne)
                 {
                     GameObject newGameObject = new GameObject(lastRegion);
+                    newGameObject.transform.parent = outlineParent.transform;
                     theLineRenderer = newGameObject.gameObject.AddComponent<LineRenderer>() as LineRenderer;
                     theLineRenderer.material = lineMaterial;
                     theLineRenderer.SetWidth(0.1f, 0.1f);
@@ -75,6 +79,7 @@ public class createOutlines : MonoBehaviour
                     count = 0;
                 }
 
+                // map lat lon to XYZ on globe
                 float phi = (90 - thisLat) * (Mathf.PI / 180);
                 float theta = (thisLon + 180) * (Mathf.PI / 180);
                 float z = -((radius) * Mathf.Sin(phi) * Mathf.Cos(theta));
