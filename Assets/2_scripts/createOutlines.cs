@@ -17,6 +17,13 @@ public class createOutlines : MonoBehaviour
     // This file must be in the StreamingAssets folder
     public string filename = "";
 
+    // parent object for outlines to sit under
+    // to keep the heirachy tidy in the editor 
+    public GameObject outlineParent;
+
+    // mercator projection or globe 
+    public bool drawToGlobe = true;
+
     // these are mostly public in order to see whats going on
     // in the inpsector
     // should not need to change in the inspector
@@ -29,8 +36,6 @@ public class createOutlines : MonoBehaviour
     LineRenderer theLineRenderer;
 
     public string[] countryName;
-
-    public GameObject outlineParent;
 
     // flag to check if you just want everything to be drawn
     // with the current line drawing method this is quite laggy
@@ -79,12 +84,28 @@ public class createOutlines : MonoBehaviour
                     count = 0;
                 }
 
-                // map lat lon to XYZ on globe
-                float phi = (90 - thisLat) * (Mathf.PI / 180);
-                float theta = (thisLon + 180) * (Mathf.PI / 180);
-                float z = -((radius) * Mathf.Sin(phi) * Mathf.Cos(theta));
-                float x = ((radius) * Mathf.Sin(phi) * Mathf.Sin(theta));
-                float y = ((radius) * Mathf.Cos(phi));
+                float x;
+                float y;
+                float z;
+
+                float scaleX = 100;
+                float scaleY = 200;
+
+                if (drawToGlobe)
+                {
+                    // map lat lon to XYZ on globe
+                    float phi = (90 - thisLat) * (Mathf.PI / 180);
+                    float theta = (thisLon + 180) * (Mathf.PI / 180);
+                    z = -((radius) * Mathf.Sin(phi) * Mathf.Cos(theta));
+                    x = ((radius) * Mathf.Sin(phi) * Mathf.Sin(theta));
+                    y = ((radius) * Mathf.Cos(phi));
+                }
+                else
+                {
+                    x = (scaleX * thisLon / 180) - 180;
+                    y = (scaleY * thisLat / 360);
+                    z = 0;
+                }
 
                 Vector3 thisPos = new Vector3(x, y, z);
 
